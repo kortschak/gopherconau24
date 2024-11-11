@@ -1,0 +1,531 @@
+# Doing Something for Fun
+Recreational Software Engineering
+8 Nov 2024
+
+Dan Kortschak
+Elastic
+kortschak ﹫home / efd6 ﹫work
+
+
+//## Doing Something for Fun
+//
+//.background image/logo-elastic-glyph-dark-ink-background.png
+
+## My Background
+
+: This is not a tech talk, but rather one of maintaining happiness and engagement.
+
+Former scientific software developer and evolutionary biologist:
+
+: originally a molecular biologist
+: - started engineering around the time I started using Go
+: - before that I was a research code programmer as part of my role as an evolutionary biologist
+: - started biogo and cofounded Gonum
+: —
+
+- bíogo
+- Gonum
+
+Job description was to explore development of tools for doing bioinformatics research (playing with fun algorithms and very large machines).
+
+: This allowed me to spend a lot of time in a wide variety of domains
+: - looking at interesting though often highly speculative things.
+: - learning from people like Dave in the early period of the Go community
+: —
+
+Now at Elastic writing connectors to get data into Elasticsearch for security applications.
+
+: I still spend time looking at interesting topics, though the space is more constrained.
+: —
+
+: This talk is about how I maintain interest in software development,
+: - how I continue to develop my skills and importantly
+: - how I have fun.
+: —
+: It will be by example of a personal software engineering project.
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Problem statement
+
+I spend time in Zoom meetings and I forget to mute/unmute.
+
+: The basis for the project requires a real (…first…) world problem.
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+## Proposed solution
+
+Get a gadget to help — maybe I can use it for other things as well.
+
+.image image/wishes.jpg 400 _
+
+: So let's start with a real first world solution.
+: —
+: The Stream Deck is essentially a macro key-pad with programmable screens on the buttons
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Now I have two problems
+
+The Stream Deck™ ecosystem does have a Zoom plugin but:
+- no support for generic macros/action on Mac
+- no official support for Linux
+
+Open source projects do exist, but support Linux only.
+
+: There is an open source project for Linux
+: - https://github.com/StreamController/StreamController started development in October 2023
+: - an older one https://github.com/timothycrosley/streamdeck-ui started in 2019
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Recreational software engineering
+
+**Let's use this as a toy engineering project — not just a coding project.**
+
+: I want to differentiate this from a recreational coding project:
+: - people often work on katas to hone their programming skills, but
+: - not just making a program
+: - making a long lasting, dynamic software system, so this is a kata for engineering
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Software Engineering
+
+**Software engineering is essentially a social activity**
+
+- programming is an interaction between a human and a machine
+- software engineering is much more
+
+_**Software engineering is what happens to programming when you add time and other programmers.**_
+
+.caption Russ Cox GopherCon Singapore 2018
+
+: Though I think this can hide some of the complexity if not though about carefully:
+: - programmers hide in many places including in the changing platforms that we use
+: - time includes changing user requirements
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## How hard can it be to build a controller system
+
+.image image/automation_optimistic.png 500 _
+
+.caption Automation https://xkcd.com/1319/
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+: If we were looking at this as a programming project we would have a graph like this.
+: —
+: Let's see where we end up.
+
+## The beginning
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+: Let's start by looking at the product we're trying to make.
+
+## Product requirements
+
+- platform agnostic
+- completely extensible
+- simple configuration
+- live config reloading
+- context aware button pages
+- animated key images
+- reasonably fault tolerant
+
+: official software: only Windows/macOS platforms
+: TOML configuration
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Engineering requirements
+
+- versionable/textual configuration
+- completely extensible without recompilation
+- non-monolithic design
+- simple but flexible IPC
+- easy to debug
+
+: TOML text based configuration
+: JSON-RPC 2.0 instead of websockets — slower, but in HID this is not an issue
+: good logging
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Technology survey
+
+- TOML for configuration
+
+- CUE for configuration verification and unification
+
+- JSON-RPC 2.0 for IPC
+
+- CEL for behaviour scripting
+
+- log/slog for logging
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Building it
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## The stack
+
+- Stream Deck™
+- USB HID
+- ?
+- Profit
+
+: The obvious starting point was to get an Stream Deck USB HID package built
+: - fortunately there is already a good package for HIDAPI bindings
+: - HIDAPI is a cross-platform HID library
+: —
+: We'll see what that makes available…
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## A monolithic toy implementation
+
+Allows building out the USB HID and Stream Deck™ control code
+
+Simple two-stage Go program:
+- first stage is a tool to compile the second stage on every invocation
+- second stage is the device control loop and image handling, using Go code as a configuration system
+
+.image image/minidex_graph.svg _ 1000
+
+: wanted to get the basic functionality working before stepping into a distributed approach
+: plan to throw one away — I really could have stopped here
+: —
+: Controller and plugin components
+: —
+: Enabled:
+: - demonstration that I can talk to the device
+: - getting text rendering, and image and animation handling sorted
+: - making sure state persistence works
+: - ironing out concurrency issues in handling user input
+: —
+: Let's briefly go through some of the code for this.
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## A monolithic toy implementation
+
+Two main control types
+
+.code code/helpers.go /Action is a plugin/,/^}/
+
+.code code/helpers.go /Plugin holds system state/,/^}/
+
+… and a bunch of configuration helpers.
+
+: Including `Presser` and `Releaser` interface types
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## A monolithic toy implementation
+
+.code code/plugin_table.go /Actions/,/gnome/
+
+: I actually think Go code makes a very nice configuration language;
+: this is something I've explored elsewhere, though not seriously.
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## A monolithic toy implementation
+
+Our favourite plugin:
+
+.code code/gopher.go /Init/,/^}/
+
+: full description of the image preparation
+: - resizing
+: - animation construction
+: - conversion to the bytes needed to be sent to the device
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## A monolithic toy implementation
+
+.code code/gopher.go /Press/,/^}/
+.code code/gopher.go /Release/,/^}/
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## It's alive!
+
+.video video/gophers.mp4 video/mp4 500 _
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Refining the system
+
+.image image/automation_dawning.png 500 _
+
+: We can see where we are going.
+: —
+: There is the basic functionality that we need.
+
+.caption Automation https://xkcd.com/1319/
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## What we don't have
+
+: It is:
+: - platform agnostic
+: - completely extensible — via Go code
+: - simple textual configuration — via Go source
+: - animated key images
+: - button page implemented
+
+We have a device that works, but…
+
+- extension is not necessarily simple
+- no live config reloading
+- paging is not context aware
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+##
+
+.background image/much_later.png
+
+: The following several months of weekends involved:
+: - developing a configuration schema
+: - implementing config reloading and unification
+: - developing an RPC approach to allow plugins to work
+: - building test plugins
+: - resolving complexity in declarative configuration state resolution
+
+## Application structure
+
+`main` is setting up a system controller:
+
+.code code/main.go /sysman/,/defer sysman/
+
+… and a configuration handler:
+
+.code code/main.go /changes/,/go w/
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Application structure
+
+… and then sending configuration to the system controller:
+
+.code code/main.go /cfgman/,
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Application structure
+
+.image image/dex_graph.svg _ 1000
+
+: - message passing kernel via RPC
+: - configuration management: loading and unification
+: - device control and plugin module management
+: - graphics and text rendering
+: - logging
+: —
+: - plugin modules are separate processes
+: —
+: - external devices: key pad and persistent store
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Plugin modules
+
+- `runner`: run arbitrary executables — allow buttons to start programs to perform actions
+- `rest`: forward REST API calls to other modules and the kernel
+- `watcher`: poll the host's user activity, and active application and window
+
+: `rest`/`runner` together enable
+: - generalised program execution
+: - introspection of the system
+: —
+: `watcher` enables switching device buttons based on activity: paging
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Scope creep
+
+: Remember that this is an recreational engineering project…
+: —
+: oh no! user demands have changed
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+## Scope creep
+
+I use an activity logger to keep track of my time/activity at the screen
+
+- Activity Watch (https://activitywatch.net/): a good tool but I had problems with it on macOS
+
+… requires awareness of active window and screen lock state, but…
+
+: … it occurred to me that…
+
+… the page responsiveness feature requires understanding active windows…
+
+… and we _already have_ this in `watcher`
+
+So add…
+
+- `worklog`: receive polling data from other modules such as `watcher`
+
+: —
+: … store activity logs into a persistent store (sqlite/postgres)
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Scope creep
+
+.image image/worklog.png 550 _
+
+: with this I can:
+: - see where my week's work has gone
+: - reflect on work patterns
+: - make sure I maintain time balance
+: - log time for work and tax purposes
+: —
+: Because of the financial record keeping, the activity logging is immutable
+: but append-amendable, notes can be added that reflect corrections or
+: updates without destroying the original data
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Representing a running system
+
+.image image/system.svg 550 _
+
+: Debuggability was a significant product requirement.
+: —
+: So the system offers state introspection tools
+: —
+: With additional visualisation tools we can see the state of a running system
+: —
+: Upper layer: services run by modules
+: Middle layer: plugin modules
+: Lower layer: device or module executable
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+## Testing
+
+Obviously testing is important:
+
+- a wide variety of testing from unit, to system to integration tests
+
+: heavy use of go-internal testscript
+
+**A release of a bad version would bring done the world-wide fleet of deployments.**
+
+(Yes, both of them!)
+
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Wrong turns? / Difficulties?
+
+SQL: General purpose user queries (details in `1c35721`)
+
+Timezones: Arrgh!
+
+Wayland: …
+
+A variety of interesting IPC and concurrency issues.
+
+: - don't attempt to sneak around SQL, do read the manual
+: - the local timezone is static in the Go runtime
+: - awareness of active windows in wayland is not a happy place
+: - serialising button presses and actions is surprisingly tricky 
+: - don't rely on finalizers for anything
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## How did we do?
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## Project evaluation
+
+☑ satisfies product requirements
+
+☑ satisfies engineering requirements
+
+☑ over-engineered (fun for the developer)
+
+☑ support engineer happy (easy to resolve issues)
+
+☑ user satisfied (works within a reasonable error budget)
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## How hard can it be to write a controller
+
+.image image/automation.png 500 _
+
+.caption Automation https://xkcd.com/1319/
+
+: So how hard can it be to write a controller?
+
+.background image/logo-elastic-glyph-dark-ink-background.png
+
+
+## I learned the Zoom key-bindings for mute
+
+_**Because the game of climbing is contrived (it's usually possible to walk or drive to the top) we abide by a system of ethics. By mutual regard for these, we instill our activity with meaning.**_
+
+.caption Kim Carrigan 1984
+
+: I've learned a lot through this 
+: and 
+: it continues to provide opportunities for learning, and fun.
+: —
+: I hear you asking, is this something I should use?
+: - no, it's not. This is not the software you are looking for.
+: - it's an exploration project, a form of shadow boxing.
+: —
+: The important thing here is that for me,
+: this is big enough to be interesting with a diversity of facets
+: but small enough to not be frustrating
+
+
+.image image/dex_readme.png 250 _
+
+.caption github.com/kortschak/dex
+
+.background image/logo-elastic-glyph-dark-ink-background.png

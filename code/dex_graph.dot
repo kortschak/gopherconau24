@@ -1,0 +1,120 @@
+digraph G {
+    node [penwidth=2 fontsize=10 shape=rectangle target="_graphviz"];
+    edge [tailport=e penwidth=2];
+    compound=true;
+    rankdir=LR;
+    newrank=true;
+    ranksep="1.5";
+    quantum="0.5";
+    subgraph cluster_A {
+        label="Application"
+        style=rounded;
+
+        "…/dex" [label="…/dex\l248 / 7.2KB\l" href="https://pkg.go.dev/…/dex" color="#079122b2"];
+
+        subgraph cluster_K {
+            label="Kernel"
+            style=rounded;
+
+            subgraph cluster_C {
+                label="Configuration"
+                style=rounded;
+
+                "…/dex/config" [label="…/dex/config\l298 / 9.2KB\l" href="https://pkg.go.dev/…/dex/config" color="#915507b2"];
+                "…/dex/internal/config" [label="…/dex/internal/config\l859 / 23.9KB\l" href="https://pkg.go.dev/…/dex/internal/config" color="#7e0791b2"];
+                "…/dex/internal/xdg" [label="…/dex/internal/xdg\l155 / 5.5KB\l" href="https://pkg.go.dev/…/dex/internal/xdg" color="#3f9107b2"];
+            }
+
+            subgraph cluster_D {
+                label="Device Control"
+                style=rounded;
+
+                "…/dex/internal/device" [label="…/dex/internal/device\l2414 / 70.7KB\l" href="https://pkg.go.dev/…/dex/internal/device" color="#910717b2"];
+                "…/dex/internal/state" [label="…/dex/internal/state\l487 / 13.8KB\l" href="https://pkg.go.dev/…/dex/internal/state" color="#916907b2"];
+                "…/dex/internal/sys" [label="…/dex/internal/sys\l978 / 30.7KB\l" href="https://pkg.go.dev/…/dex/internal/sys" color="#639107b2"];
+            }
+
+            subgraph cluster_G {
+                label="Graphics"
+                style=rounded;
+
+                "…/dex/internal/animation" [label="…/dex/internal/animation\l564 / 15.4KB\l" href="https://pkg.go.dev/…/dex/internal/animation" color="#079165b2"];
+                "…/dex/internal/text" [label="…/dex/internal/text\l193 / 5.2KB\l" href="https://pkg.go.dev/…/dex/internal/text" color="#912207b2"];
+            }
+
+            subgraph cluster_L {
+                label="Logging"
+                style=rounded;
+
+                "…/dex/internal/private" [label="…/dex/internal/private\l222 / 5.6KB\l" href="https://pkg.go.dev/…/dex/internal/private" color="#6f9107b2"];
+                "…/dex/internal/slogext" [label="…/dex/internal/slogext\l265 / 8.2KB\l" href="https://pkg.go.dev/…/dex/internal/slogext" color="#079174b2"];
+                "…/dex/internal/version" [label="…/dex/internal/version\l47 / 1.1KB\l" href="https://pkg.go.dev/…/dex/internal/version" color="#910745b2"];
+            }
+
+            subgraph cluster_R {
+                label="RPC"
+                style=rounded;
+
+                "…/dex/rpc" [label="…/dex/rpc\l986 / 31.3KB\l" href="https://pkg.go.dev/…/dex/rpc" color="#079109b2"];
+            }
+        }
+
+        subgraph cluster_M {
+            label="Plugin Modules"
+            style=rounded;
+
+            "rest" [label="REST module" color="#079122b2"];
+            "runner" [label="runner module" color="#079122b2"];
+            "worklog" [label="work logging module" color="#079122b2"];
+            "watcher" [label="window watcher module" color="#079122b2"];
+        }
+        "…/dex/rpc" -> "rest" [style=dashed dir=both]
+        "…/dex/rpc" -> "runner" [style=dashed dir=both]
+        "…/dex/rpc" -> "worklog" [style=dashed dir=both]
+        "…/dex/rpc" -> "watcher" [style=dashed dir=both]
+    }
+
+    subgraph cluster_Dev {
+        label="Devices"
+        style=rounded;
+
+        "deck" [label="Stream Deck™" color="#079122b2"];
+        "ds" [label="Data store" color="#079122b2"];
+    }
+    "…/dex/internal/device" -> "deck" [style=dashed dir=both]
+    "…/dex/internal/state" -> "ds" [style=dashed dir=both]
+
+
+    "…/dex" -> "…/dex/config" [color="#915507b2"];
+    "…/dex" -> "…/dex/internal/config" [color="#7e0791b2"];
+    "…/dex" -> "…/dex/internal/device" [color="#910717b2"];
+    "…/dex" -> "…/dex/internal/slogext" [color="#079174b2"];
+    "…/dex" -> "…/dex/internal/state" [color="#916907b2"];
+    "…/dex" -> "…/dex/internal/sys" [color="#639107b2"];
+    "…/dex" -> "…/dex/internal/version" [color="#910745b2"];
+    "…/dex" -> "…/dex/internal/xdg" [color="#3f9107b2"];
+    "…/dex" -> "…/dex/rpc" [color="#079109b2"];
+    "…/dex/config" -> "…/dex/rpc" [color="#079109b2"];
+    "…/dex/internal/animation" -> "…/dex/internal/text" [color="#912207b2"];
+    "…/dex/internal/config" -> "…/dex/config" [color="#915507b2"];
+    "…/dex/internal/config" -> "…/dex/internal/private" [color="#6f9107b2"];
+    "…/dex/internal/config" -> "…/dex/internal/slogext" [color="#079174b2"];
+    "…/dex/internal/config" -> "…/dex/rpc" [color="#079109b2"];
+    "…/dex/internal/device" -> "…/dex/internal/animation" [color="#079165b2"];
+    "…/dex/internal/device" -> "…/dex/internal/config" [color="#7e0791b2"];
+    "…/dex/internal/device" -> "…/dex/internal/slogext" [color="#079174b2"];
+    "…/dex/internal/device" -> "…/dex/internal/sys" [color="#639107b2"];
+    "…/dex/internal/device" -> "…/dex/internal/text" [color="#912207b2"];
+    "…/dex/internal/device" -> "…/dex/rpc" [color="#079109b2"];
+    "…/dex/internal/slogext" -> "…/dex/internal/private" [color="#6f9107b2"];
+    "…/dex/internal/state" -> "…/dex/internal/sys" [color="#639107b2"];
+    "…/dex/internal/state" -> "…/dex/rpc" [color="#079109b2"];
+    "…/dex/internal/sys" -> "…/dex/internal/config" [color="#7e0791b2"];
+    "…/dex/internal/sys" -> "…/dex/internal/private" [color="#6f9107b2"];
+    "…/dex/internal/sys" -> "…/dex/internal/slogext" [color="#079174b2"];
+    "…/dex/internal/sys" -> "…/dex/internal/version" [color="#910745b2"];
+    "…/dex/internal/sys" -> "…/dex/rpc" [color="#079109b2"];
+    "…/dex/rpc" -> "…/dex/internal/slogext" [color="#079174b2"];
+    "…/dex/rpc" -> "…/dex/internal/version" [color="#910745b2"];
+    "…/dex/rpc" -> "…/dex/internal/xdg" [color="#3f9107b2"];
+}

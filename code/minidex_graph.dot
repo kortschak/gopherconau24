@@ -1,0 +1,88 @@
+digraph G {
+    node [penwidth=2 fontsize=10 shape=rectangle target="_graphviz"];
+    edge [tailport=e penwidth=2];
+    compound=true;
+    rankdir=LR;
+    newrank=true;
+    ranksep="1.5";
+    quantum="0.5";
+    "…/dex/minidex/plugins" [label="…/dex/minidex/plugins\l794 / 20.4KB\l" href="https://pkg.go.dev/…/dex/minidex/plugins" color="#074191b2"];
+    "…/dex/minidex" -> "…/dex/minidex/dex" [label="build" style="dashed" color="#074191b2"];
+    "…/dex/minidex/dex" -> "…/dex/minidex/plugins" [color="#074191b2"];
+    "…/dex/minidex/dex" -> "…/dex/internal/xdg" [color="#074191b2"];
+
+    subgraph cluster_B {
+        label="Builder"
+        style=rounded;
+        node [penwidth=2 fontsize=10 shape=rectangle target="_graphviz"];
+        edge [tailport=e penwidth=2];
+        compound=true;
+        rankdir=LR;
+        newrank=true;
+        ranksep="1.5";
+        quantum="0.5";
+        "…/dex/minidex" [label="…/dex/minidex\l50 / 1.3KB\l" href="https://pkg.go.dev/…/dex/minidex" color="#270791b2"];
+    }
+
+    subgraph cluster_D {
+        label="Application"
+        style=rounded;
+
+        subgraph cluster_C {
+            label="Controller"
+            style=rounded;
+            node [penwidth=2 fontsize=10 shape=rectangle target="_graphviz"];
+            edge [tailport=e penwidth=2];
+            compound=true;
+            rankdir=LR;
+            newrank=true;
+            ranksep="1.5";
+            quantum="0.5";
+            "…/dex/minidex/dex" [label="…/dex/minidex/dex\l135 / 3.6KB\l" href="https://pkg.go.dev/…/dex/minidex/dex" color="#910757b2"];
+            "…/ardilla" [label="…/ardilla\l654 / 17.1KB\l" href="https://pkg.go.dev/…/ardilla" color="#079190b2"];
+            "…/dex/internal/device" [label="…/dex/internal/device\l2414 / 70.7KB\l" href="https://pkg.go.dev/…/dex/internal/device" color="#910717b2"];
+            "…/dex/internal/state" [label="…/dex/internal/state\l487 / 13.8KB\l" href="https://pkg.go.dev/…/dex/internal/state" color="#916907b2"];
+            "…/dex/internal/xdg" [label="…/dex/internal/xdg\l155 / 5.5KB\l" href="https://pkg.go.dev/…/dex/internal/xdg" color="#3f9107b2"];
+            "…/dex/minidex/plugins" [label="…/dex/minidex/plugins\l794 / 20.4KB\l" href="https://pkg.go.dev/…/dex/minidex/plugins" color="#074191b2"];
+            "golang.org/x/image/bmp" [label="golang.org/x/image/bmp\l489 / 14.3KB\l" href="https://pkg.go.dev/golang.org/x/image/bmp" color="#918a07b2"];
+            "golang.org/x/image/tiff" [label="golang.org/x/image/tiff\l1381 / 37.5KB\l" href="https://pkg.go.dev/golang.org/x/image/tiff" color="#910b07b2"];
+            "…/ardilla" -> "golang.org/x/image/bmp" [color="#918a07b2"];
+            "…/dex/internal/device" -> "…/ardilla" [color="#079190b2"];
+            "…/dex/internal/device" -> "golang.org/x/image/bmp" [color="#918a07b2"];
+            "…/dex/internal/device" -> "golang.org/x/image/tiff" [color="#910b07b2"];
+            "…/dex/minidex/plugins" -> "…/dex/internal/device" [color="#910717b2"];
+            "…/dex/minidex/plugins" -> "…/dex/internal/state" [color="#916907b2"];
+        }
+
+        subgraph cluster_P {
+            label="Plugin Features";
+            style=rounded;
+            node [penwidth=2 fontsize=10 shape=rectangle target="_graphviz"];
+            edge [tailport=e penwidth=2];
+            compound=true;
+            rankdir=LR;
+            newrank=true;
+            ranksep="1.5";
+            quantum="0.5";
+            "…/dex/internal/animation" [label="…/dex/internal/animation\l564 / 15.4KB\l" href="https://pkg.go.dev/…/dex/internal/animation" color="#079165b2"];
+            "…/dex/internal/device" [label="…/dex/internal/device\l2414 / 70.7KB\l" href="https://pkg.go.dev/…/dex/internal/device" color="#910717b2"];
+            "…/dex/internal/state" [label="…/dex/internal/state\l487 / 13.8KB\l" href="https://pkg.go.dev/…/dex/internal/state" color="#916907b2"];
+            "…/dex/internal/text" [label="…/dex/internal/text\l193 / 5.2KB\l" href="https://pkg.go.dev/…/dex/internal/text" color="#912207b2"];
+            "…/dex/rpc" [label="…/dex/rpc\l986 / 31.3KB\l" href="https://pkg.go.dev/…/dex/rpc" color="#079109b2"];
+            "golang.org/x/image/draw" [label="golang.org/x/image/draw\l8466 / 280.9KB\l" href="https://pkg.go.dev/golang.org/x/image/draw" color="#916f07b2"];
+            "golang.org/x/image/font/basicfont" [label="golang.org/x/image/font/basicfont\l1479 / 51.9KB\l" href="https://pkg.go.dev/golang.org/x/image/font/basicfont" color="#910768b2"];
+            "golang.org/x/sys/execabs" [label="golang.org/x/sys/execabs\l105 / 4.0KB\l" href="https://pkg.go.dev/golang.org/x/sys/execabs" color="#079174b2"];
+            "…/dex/internal/animation" -> "…/dex/internal/text" [color="#912207b2"];
+            "…/dex/internal/animation" -> "golang.org/x/image/draw" [color="#916f07b2"];
+            "…/dex/internal/animation" -> "golang.org/x/image/font/basicfont" [color="#910768b2"];
+            "…/dex/internal/device" -> "…/dex/internal/animation" [color="#079165b2"];
+            "…/dex/internal/device" -> "…/dex/internal/text" [color="#912207b2"];
+            "…/dex/internal/device" -> "…/dex/rpc" [color="#079109b2"];
+            "…/dex/internal/device" -> "golang.org/x/image/draw" [color="#916f07b2"];
+            "…/dex/internal/device" -> "golang.org/x/image/font/basicfont" [color="#910768b2"];
+            "…/dex/internal/state" -> "…/dex/rpc" [color="#079109b2"];
+            "…/dex/internal/text" -> "golang.org/x/image/font/basicfont" [color="#910768b2"];
+            "…/dex/rpc" -> "golang.org/x/sys/execabs" [color="#079174b2"];
+        }
+    }
+}

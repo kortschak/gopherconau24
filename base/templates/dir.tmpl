@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Talk - GopherConAU 2024</title>
+  <link type="text/css" rel="stylesheet" href="/static/dir.css">
+  <script src="/static/dir.js"></script>
+</head>
+<body>
+
+<div id="topbar"><div class="container">
+
+<form method="GET" action="//golang.org/search">
+<div id="menu">
+</div>
+<div id="heading"><a href="/">GopherConAU 2024</a></div>
+</form>
+
+</div></div>
+
+<div id="page">
+
+  <h1>Talk</h1>
+
+  {{with .Path}}<h2>{{.}}</h2>{{end}}
+
+  {{with .Articles}}
+  <h4>Articles:</h4>
+  <dl>
+  {{range .}}
+  <dd><a href="/{{.Path}}">{{.Name}}</a>: {{.Title}}</dd>
+  {{end}}
+  </dl>
+  {{end}}
+
+  {{with .Slides}}
+  <h4>Slide deck:</h4>
+  <dl>
+  {{range .}}
+  <dd><a href="/{{.Path}}">{{.Name}}</a>: {{.Title}}</dd>
+  {{end}}
+  </dl>
+  {{end}}
+
+  {{with .Other}}
+  <h4>Files:</h4>
+  <dl>
+  {{range .}}
+  <dd><a href="/{{.Path}}">{{.Name}}</a></dd>
+  {{end}}
+  </dl>
+  {{end}}
+
+  {{with .Dirs}}
+  <h4>Sub-directories:</h4>
+  <dl>
+  {{range .}}
+  <dd><a href="/{{.Path}}">{{.Name}}</a></dd>
+  {{end}}
+  </dl>
+  {{end}}
+
+</div>
+
+<div id="footer">
+All content copyright ©2024 Dan Kortschak unless otherwise noted.
+</div>
+
+</body>
+</html>
